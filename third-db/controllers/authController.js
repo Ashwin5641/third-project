@@ -75,7 +75,7 @@ exports.login = async (req, res) => {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: false,
-            sameSite: 'Strict',
+            sameSite: 'Lax',
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
@@ -85,11 +85,12 @@ exports.login = async (req, res) => {
             token: accessToken,
             user: {
                 id: existing.id,
+                name: existing.name,
                 email: existing.email,
                 role: existing.role
             }
         })
-    } catch (err) { 
+    } catch (err) {
         console.error(err);
         return res.status(500).json({
             success: false,
@@ -102,7 +103,7 @@ exports.refresh = async (req, res) => {
     const token = req.cookies.refreshToken;
 
     if (!token) {
-        return res.sendStatus(401).json({
+        return res.status(401).json({
             message: 'No token'
         })
     }
